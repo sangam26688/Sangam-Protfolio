@@ -14,7 +14,8 @@ const Contact = () => {
 
     try {
       // ✅ ASLI API CALL (Backend URL)
-      const response = await fetch('http://localhost:5000/api/contact', {
+      // ✅ Yahan apna Vercel wala Backend URL dalo
+const response = await fetch('https://sangam-protfolio-api.vercel.app/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

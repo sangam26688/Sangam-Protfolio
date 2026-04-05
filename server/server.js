@@ -4,35 +4,37 @@ const cors = require('cors');
 const nodemailer = require('nodemailer');
 const path = require('path');
 
-// 🔥 FORCE LOAD .env (Isse undefined wala error fix ho jayega)
-require('dotenv').config({ path: path.resolve(__dirname, './.env') });
+// .env load karne ka sahi tarika
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// 🔍 DEBUGGING: Terminal mein check karne ke liye (Sab sahi raha toh ye 'FOUND' dikhayega)
-console.log("------------------------------------");
-console.log("Checking Environment Variables...");
-console.log("Mongo URI:", process.env.MONGODB_URI ? "✅ FOUND" : "❌ NOT FOUND");
-console.log("Email User:", process.env.EMAIL_USER ? "✅ FOUND" : "❌ NOT FOUND");
-console.log("------------------------------------");
+// ✅ 1. Middleware Settings (Updated for Production)
+const allowedOrigins = [
+    "http://localhost:5173", 
+    "https://sangam-protfolio-frontend.vercel.app" // 👈 Apna ASLI frontend URL yahan dalo
+];
 
-// ✅ 1. Middleware Settings
 app.use(cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:5173", 
-    methods: ["GET", "POST"],
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }));
+
 app.use(express.json());
 
 // ✅ 2. MongoDB Connection
-if (!process.env.MONGODB_URI) {
-    console.error("❌ ERROR: MONGODB_URI is not defined in .env file!");
-} else {
-    mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('✅ MongoDB Connected Successfully'))
-    .catch(err => console.log('❌ MongoDB Connection Error:', err));
-}
+mongoose.connect(process.env.MONGODB_URI)
+    .then(() => console.log('✅ MongoDB Connected'))
+    .catch(err => console.log('❌ MongoDB Error:', err));
 
 // ✅ 3. Database Schemas
 const messageSchema = new mongoose.Schema({
@@ -43,15 +45,14 @@ const messageSchema = new mongoose.Schema({
 });
 const Message = mongoose.model('Message', messageSchema);
 
-const projectSchema = new mongoose.Schema({
+const Project = mongoose.model('Project', new mongoose.Schema({
     title: String,
     description: String,
     tech: [String],
     liveLink: String,
     githubLink: String,
     image: String
-});
-const Project = mongoose.model('Project', projectSchema);
+}));
 
 // ✅ 4. Nodemailer Transporter
 const transporter = nodemailer.createTransport({
@@ -62,16 +63,10 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-// Verify Email Connection
-transporter.verify((error) => {
-    if (error) {
-        console.log("❌ Nodemailer Error (Check App Password):", error.message);
-    } else {
-        console.log("✅ Nodemailer is ready to send emails");
-    }
-});
-
 // ✅ 5. Routes
+app.get('/', (req, res) => {
+    res.send("🚀 Server is running smoothly!");
+});
 
 // A. Get All Projects
 app.get('/api/projects', async (req, res) => {
@@ -86,7 +81,6 @@ app.get('/api/projects', async (req, res) => {
 // B. Post Contact Message
 app.post('/api/contact', async (req, res) => {
     const { name, email, message } = req.body;
-
     if (!name || !email || !message) {
         return res.status(400).json({ success: false, message: "All fields are required" });
     }
@@ -99,7 +93,10 @@ app.post('/api/contact', async (req, res) => {
             from: `"Portfolio Bot" <${process.env.EMAIL_USER}>`,
             to: process.env.EMAIL_USER, 
             subject: `🚀 New Message from ${name}`,
-            html: `<h3>New Contact Message</h3><p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Message:</strong> ${message}</p>`
+            html: `<h3>New Contact Message</h3>
+                   <p><strong>Name:</strong> ${name}</p>
+                   <p><strong>Email:</strong> ${email}</p>
+                   <p><strong>Message:</strong> ${message}</p>`
         };
 
         await transporter.sendMail(mailOptions);
@@ -110,14 +107,7 @@ app.post('/api/contact', async (req, res) => {
     }
 });
 
-// ✅ 6. Production Setup
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../frontend/dist')));
-    app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, '../frontend', 'dist', 'index.html'));
-    });
-}
-
+// Server Listen
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`🚀 Server running on port ${PORT}`);
 });
