@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* 🔥 UNIQUE MODERN SCROLLBAR */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-slate-50 dark:bg-slate-950;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 dark:bg-slate-800 rounded-full border-[3px] border-solid border-transparent bg-clip-content;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-blue-500;
+  }
+}
