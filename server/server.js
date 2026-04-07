@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 5000;
 
 // ✅ 1. Middleware Settings (Updated for Production)
 const allowedOrigins = [
+    "https://sangam-p.vercel.app", // 👈 Apna ASLI frontend URL yahan dalo"
     "http://localhost:5173", 
     "https://sangam-protfolio-frontend.vercel.app" // 👈 Apna ASLI frontend URL yahan dalo
 ];
