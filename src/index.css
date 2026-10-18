@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* fixed navbar ke neeche section ka title na chhupe */
+    scroll-padding-top: 5.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-[#f8fafc] text-slate-900 dark:bg-slate-950 dark:text-white antialiased transition-colors duration-500;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden; /* blur blobs se horizontal scroll na aaye */
+  }
+
+  /* Text selection ab brand colors mein */
+  ::selection {
+    @apply bg-indigo-500/25 text-slate-900 dark:text-white;
+  }
+
+  /* Keyboard users ke liye clear focus ring */
+  :focus-visible {
+    @apply outline-none ring-2 ring-blue-500 ring-offset-2 ring-offset-transparent dark:ring-cyan-400;
+    border-radius: 0.5rem;
+  }
+
+  /* 🔥 UNIQUE MODERN SCROLLBAR (Chrome, Edge, Safari) */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-slate-50 dark:bg-slate-950;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 dark:bg-slate-800 rounded-full border-[3px] border-solid border-transparent bg-clip-content transition-colors;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-blue-500;
+  }
+
+  /* Firefox only: Chrome 121+ pe ye webkit scrollbar ko override kar deta hai,
+     isliye sirf unhi browsers ko diya jo ::-webkit-scrollbar nahi samajhte */
+  @supports not selector(::-webkit-scrollbar) {
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 #f8fafc;
+    }
+    .dark {
+      scrollbar-color: #1e293b #020617;
+    }
+  }
+}
+
+@layer components {
+  /* Kisi bhi nayi section/card ke liye ready-made glass.
+     Use: className="glass-surface rounded-3xl" */
+  .glass-surface {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.38));
+    -webkit-backdrop-filter: blur(18px) saturate(170%);
+    backdrop-filter: blur(18px) saturate(170%);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+    box-shadow: 0 12px 40px rgba(59, 76, 180, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+
+  .dark .glass-surface {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.025));
+    border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+
+  @media (max-width: 767px) {
+    .glass-surface {
+      -webkit-backdrop-filter: blur(12px) saturate(150%);
+      backdrop-filter: blur(12px) saturate(150%);
+    }
+  }
+}
+
+/* Jo log "reduce motion" use karte hain unke liye sab shaant */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
