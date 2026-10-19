@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useScroll, useSpring, useReducedMotion } from 'framer-motion';
-import { FaGithub, FaLinkedin, FaBars, FaTimes, FaLightbulb, FaRegLightbulb } from 'react-icons/fa';
+import { FaGithub, FaLinkedin, FaBars, FaTimes, FaLightbulb, FaRegLightbulb , FaTwitter } from 'react-icons/fa';
 
 /* Glass styles live here so no Tailwind config is needed */
 const glassCSS = `
@@ -184,6 +184,10 @@ const Navbar = () => {
               <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"
                  className="hover:text-blue-600 transition-transform hover:-translate-y-0.5">
                 <FaLinkedin size={18} />
+              </a>
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter"
+                 className="hover:text-blue-600 transition-transform hover:-translate-y-0.5">
+                <FaTwitter size={18} />
               </a>
             </div>
           </div>
